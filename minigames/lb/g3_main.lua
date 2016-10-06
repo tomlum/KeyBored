@@ -1,7 +1,12 @@
 --TALLY
+--Idle Sounds
+--Tuning orchestra, background fades to black
+--Workout Song/Orchestra, song speeds up as the timer goes on
+--Gymnopedie
 --one percent chance of meat punching bag
 --clock starts as clock turns into heart
 -- Gymnopedie
+-- Random amount of zoom time and amount
 
 -- SOUNDS - adding weights, do an adding weight sound
 -- ticking clock sound for adding time
@@ -55,7 +60,7 @@ dot = g3NewImage("dot.png")
 
 function g3_load()
 	lg.setBackgroundColor(100,100,100)
-	simpleScale.setScreen(800, 500, 800, 500, {fullscreen=false, vsync=true, msaa=0})
+	simpleScale.setScreen(800, 500, 800/4, 500/4, {fullscreen=false, vsync=true, msaa=0})
 
 	sentences = {
 		{"I wonder if the chicken came before the egg...",}
@@ -81,9 +86,15 @@ function g3_load()
 	time_difficulty = 30
 	rounds = 3
 
-	darktime = 50
-	finishtime = 150
-	cinematime = 50
+	readytime = 150
+	zoomtime = 50
+	revelationtime = 100
+	finishtime = 200
+	darktime = 100
+
+
+	zoomamount = 2
+
 
 	player = {x = 400, y = 420, scale = 4}
 	reset()
@@ -107,9 +118,7 @@ function reset()
 	wrongchar = ""
 	zoomy = 1
 
-	readytimer = 0
-	darktimer = 0
-	cinemaTimer = 0
+	timer = 0
 
 	player.im = buff1
 	player.wordplace = 4
@@ -137,17 +146,7 @@ function g3_textinput(t)
 end
 
 function g3_update()
-	if failure then
-		if zoomy < 2 then
-			zoomy = zoomy + .008
-		else
-			darktimer = darktimer + 1
-			player.im = buffrevelation
-			if darktimer > darktime then
-				mode = 3
-			end
-		end
-	end
+
 	if mode == 1 then
 		player.im = buff1
 		if lk.isClick("up") and difficulty < #sentences then
@@ -162,9 +161,31 @@ function g3_update()
 			currentSentence = sentences[difficulty][math.random(#sentences[difficulty])]
 			currentLinesHeight = sentenceLinesHeight[difficulty][math.random(#sentences[difficulty])]
 			clock = time_difficulty*secondDuration
-			mode = 2
+			timer = 1
+		end
+		if timer > 0 then
+			timer = timer + 1
+
+			if timer > readytime then
+				mode = 2
+				timer = 0
+			end
 		end
 	elseif mode == 2 then
+
+		if failure then
+			if zoomy < zoomamount  then
+				zoomy = zoomy + zoomamount/zoomtime
+			else
+				timer = timer + 1
+				player.im = buffrevelation
+				if timer > revelationtime then
+					mode = 3
+					timer = 0
+				end
+			end
+		end
+
 		if currentChar >= #currentSentence/3 and currentChar <= #currentSentence*(2/3) then
 			player.im = buff2
 			player.wordplace = 38
@@ -183,9 +204,10 @@ function g3_update()
 			end
 		end
 	elseif mode == 3 then
-		cinemaTimer = cinemaTimer + 1
+		timer = timer + 1
 
-		if cinemaTimer > finishtime then
+		if timer > finishtime then
+			timer = 0
 			nextTurn()
 		end
 	end
@@ -199,9 +221,9 @@ function g3_draw()
 	if mode == 1 then
 		lg.draw(background,0,0,0,4,4)
 		lg.setColor(255,0,0,70)	
-		lg.arc("fill", "pie", 181*4+2, 24*4+2, 40, -math.pi/2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2, 1000)
+		lg.arc("fill", "pie", 181*4+2, 24*4+2, 60, -math.pi/2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2, 1000)
 		lg.setColor(0,0,0)	
-		lg.draw(dot, 181*4+2, 24*4+2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2-math.pi/2, 2, 40)
+		lg.draw(dot, 181*4+2, 24*4+2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2-math.pi/2, 2, 60)
 		lg.setColor(255,255,255)
 		lg.draw(clockmaskinstructions,0,0,0,4,4)
 
@@ -209,6 +231,9 @@ function g3_draw()
 		setPlayerColor(currentPlayer)
 		lg.printf(difficulty, 10, 10, 1000, "left")
 
+		lg.setColor(0,0,0,math.min(timer,100))
+		lg.rectangle("fill",0,0,1000,1000)
+		cclear()
 	elseif mode == 2 then
 		lg.draw(background,0,0,0,4,4)
 		lg.setColor(255,0,0,70)	
@@ -217,6 +242,11 @@ function g3_draw()
 		lg.draw(dot, 181*4+2, 24*4+2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2-math.pi/2, 2, 40)
 		lg.setColor(255,255,255)
 		lg.draw(clockmask,0,0,0,4,4)
+
+
+		lg.setColor(0,0,0,100)
+		lg.rectangle("fill",0,0,1000,1000)
+		cclear()
 
 		if clock%2 == 0 and not failure then
 			rand1 = cu.floRan(-currentChar/80,currentChar/80)
@@ -230,7 +260,7 @@ function g3_draw()
 		end
 
 		lg.draw(player.im,player.x+rand5*7,player.y+rand6*7,0,4,4,70,80)
-		lg.setColor(100,100,100)
+		lg.setColor(200,200,200)
 		lg.printf(currentSentence, 55+rand1*10, 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 600, "left")
 		lg.printf(currentSentence, 55+rand3*10, 10*rand4+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 600, "left")
 		setPlayerColor(currentPlayer)
@@ -242,7 +272,7 @@ function g3_draw()
 	elseif mode == 3 then
 		zoomy = 1
 		lg.setBackgroundColor(0,0,0)
-		if cinemaTimer > cinematime then
+		if timer > darktime then
 			lg.draw(graduating,0,0,0,2.3,2.3)
 		end
 	end

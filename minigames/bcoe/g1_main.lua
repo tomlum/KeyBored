@@ -162,7 +162,7 @@ function g1_update()
 	end
 
 	if fade == 0 then
-		mode = "RESULTS"
+		MODE = "RESULTS"
 	end
 end
 

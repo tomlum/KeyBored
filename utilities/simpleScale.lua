@@ -11,6 +11,7 @@ local screenType
 --screenW and screenH are the width and height of the final screen
 function simpleScale.setScreen(gw, gh, sw, sh, settings)	
 	gAspectRatio = gw/gh
+	love.window.setMode(sw,sh, settings)
 	gameW, gameH, screenW, screenH = gw, gh, love.graphics.getWidth(), love.graphics.getHeight()
 	sAspectRatio = screenW/screenH
 
@@ -21,7 +22,7 @@ function simpleScale.setScreen(gw, gh, sw, sh, settings)
 		xt = 0
 		yt = screenH/2 - (scale*gameH)/2
 
-		--Screen aspect ratio is WIDER than game
+	--Screen aspect ratio is WIDER than game
 	elseif gAspectRatio < sAspectRatio then
 		scale = screenH/gameH
 
@@ -32,7 +33,6 @@ function simpleScale.setScreen(gw, gh, sw, sh, settings)
 		xt = 0
 		yt = 0
 	end
-
 end
 
 -- Transforms screen geometry. Call this at the beginning of love.draw().

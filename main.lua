@@ -3,7 +3,7 @@ function love.load()
 	--Game Initializers
 	require "utilities/utilities"
 	la.setVolume(0)
-	lw.setMode(1200,750)
+	--lw.setMode(1200,750)
 	math.randomseed(os.clock())
 	lg.setDefaultFilter("linear","nearest",1)
 	require "menus/menu"
@@ -15,9 +15,9 @@ function love.load()
 	--USEFUL DEBUG GLOBALS--
 	------------------------
 	debug = false
-	mode = "TITLE"
 	--TITLE -> SELECT -> PLAY -> RESULTS
-	game = 4
+	MODE = "PLAY"
+	game = 3
 	------------------------
 	------------------------
 
@@ -36,13 +36,13 @@ end
 
 function love.keypressed(key)
 	updateClick1(key)
-	if mode == "PLAY" then
+	if MODE == "PLAY" then
 		keypressGames(key)
 	end
 end
 
 function love.textinput(t)
-	if mode == "PLAY" then
+	if MODE == "PLAY" then
 		textinputGames(t)
 	end
 end
@@ -55,13 +55,13 @@ function love.update()
 	backgroundHue = (backgroundHue + .002)%1
 
 	if not pause then
-		if mode == "TITLE" then
+		if MODE == "TITLE" then
 			updateTitle()
-		elseif mode == "SELECT" then
+		elseif MODE == "SELECT" then
 			updateSelect()
-		elseif mode == "PLAY" then
+		elseif MODE == "PLAY" then
 				update_games()
-		elseif mode == "RESULTS" then
+		elseif MODE == "RESULTS" then
 			updateResults()
 		end
 	end
@@ -71,16 +71,16 @@ end
 
 function love.draw()
 	updateCamera()
-	if mode == "TITLE" then
+	if MODE == "TITLE" then
 		drawTitle()
-	elseif mode == "SELECT" then
+	elseif MODE == "SELECT" then
 		drawSelect()
-	elseif mode == "PLAY" then
+	elseif MODE == "PLAY" then
 		drawGames()
 		if fade <= 0 then
-			mode = "RESULTS"
+			MODE = "RESULTS"
 		end
-	elseif mode == "RESULTS" then
+	elseif MODE == "RESULTS" then
 		drawResults()
 	end
 
@@ -88,7 +88,7 @@ function love.draw()
 	drawPause()
 
 	if debug then
-		lg.print("mode: "..mode, 10, 10)
+		lg.print("MODE: "..MODE, 10, 10)
 		lg.print("fade: "..fade, 10, 40)
 		lg.print("fadeV: "..fadeV, 10, 70)
 	end

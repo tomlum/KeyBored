@@ -40,7 +40,7 @@ function updateSelect()
         camera.j = -20
       end
       if fade == 0 then
-        mode = "PLAY"
+        MODE = "PLAY"
       end
 
       --Down Mode
@@ -90,7 +90,7 @@ function updateSelect()
       end
 
       if fade == 0 and fadeV == 0 then
-        mode = "TITLE"
+        MODE = "TITLE"
       end
 
       if game > 0 and lk.isClick("return") and fade == 255 then

@@ -22,7 +22,7 @@ function updateResults()
       fadeV = -3
     end
     if fade <= 0 then
-      mode = "SELECT"
+      MODE = "SELECT"
     end
   end
 end

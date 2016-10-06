@@ -4,9 +4,9 @@ require "menus/select"
 require "menus/results"
 require "menus/pause"
 
---The last mode 
+--The last MODE 
 oldMode = "~"
---Initial hue for the title mode
+--Initial hue for the title MODE
 backgroundHue= 0
 --Fade amount
 fade = 255
@@ -15,15 +15,15 @@ fadeV = 0
 
 
 function menuSwitch()
-  if mode == "TITLE" and oldMode ~= "TITLE" then
+  if MODE == "TITLE" and oldMode ~= "TITLE" then
     fadeV = 4
-  elseif mode == "SELECT" and oldMode ~= "SELECT" then
+  elseif MODE == "SELECT" and oldMode ~= "SELECT" then
     bookDropScale = 50
     bookDust = {}
     fadeV = 3
     camera.y = 0
     game = 1
-  elseif mode == "PLAY" and oldMode ~= "PLAY" then
+  elseif MODE == "PLAY" and oldMode ~= "PLAY" then
     highscore = save.highscores[game]
     if game == 1 then
       g1_load()
@@ -33,7 +33,7 @@ function menuSwitch()
       g3_load()
     end
     fade = 255
-  elseif mode == "RESULTS" and oldMode ~= "RESULTS"  then
+  elseif MODE == "RESULTS" and oldMode ~= "RESULTS"  then
 
     if highscore < winningScore then
       highscore = winningScore
@@ -44,7 +44,7 @@ function menuSwitch()
     fireworks = {}
     fadeV = 3
   end
-  oldMode = mode
+  oldMode = MODE
 end
 
 function updateTitle()
@@ -61,7 +61,7 @@ function updateTitle()
   end
 
   if fade <= 0 and fade == 0 then
-    mode = "SELECT"
+    MODE = "SELECT"
   end
 end
 

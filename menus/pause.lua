@@ -7,7 +7,7 @@ im_pause2 = lg.newImage("assets/im/pause2.png")
 function drawPause()
 	lg.setColor(255,255,255)
 	if pause then
-		if mode == "PLAY" then
+		if MODE == "PLAY" then
 			lg.draw(im_pause2,0,0,0,5,5)
 		else
 			lg.draw(im_pause,0,0,0,5,5)
@@ -24,10 +24,10 @@ function updatePause()
 			if quitTimer > 50 then
 				love.event.quit()
 			end
-		elseif lk.isDown("delete") and mode == "PLAY" then
+		elseif lk.isDown("delete") and MODE == "PLAY" then
 			selectTimer = selectTimer + 1
 			if selectTimer > 50 then
-				mode = "SELECT"
+				MODE = "SELECT"
 			end
 		else
 			quitTimer = 0
