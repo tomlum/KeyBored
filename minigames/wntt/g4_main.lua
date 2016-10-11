@@ -1,3 +1,7 @@
+--busy city comparison
+--Writing a 
+--Queueing action for the thinking "Um...well..."
+
 function g4NewImage(filePath)
 	return lg.newImage("minigames/wntt/"..filePath)
 end
@@ -12,7 +16,7 @@ end
 
 
 
-function g4_load()
+function g4_update()
 
 end
 

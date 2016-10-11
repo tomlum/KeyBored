@@ -1,5 +1,6 @@
 --TALLY
 --Idle Sounds
+-- plink sound easter egg
 --Tuning orchestra, background fades to black
 --Workout Song/Orchestra, song speeds up as the timer goes on
 --Gymnopedie
@@ -7,6 +8,8 @@
 --clock starts as clock turns into heart
 -- Gymnopedie
 -- Random amount of zoom time and amount
+
+--Pseudo Haptic shake on adding a weight
 
 -- SOUNDS - adding weights, do an adding weight sound
 -- ticking clock sound for adding time
@@ -60,7 +63,7 @@ dot = g3NewImage("dot.png")
 
 function g3_load()
 	lg.setBackgroundColor(100,100,100)
-	simpleScale.setScreen(800, 500, 800/4, 500/4, {fullscreen=false, vsync=true, msaa=0})
+	simpleScale.setScreen(800, 500, 80, 50, {fullscreen=false, vsync=true, msaa=0})
 
 	sentences = {
 		{"I wonder if the chicken came before the egg...",}
@@ -86,11 +89,11 @@ function g3_load()
 	time_difficulty = 30
 	rounds = 3
 
-	readytime = 150
-	zoomtime = 50
-	revelationtime = 100
-	finishtime = 200
-	darktime = 100
+	readytime = 130
+	zoomtime = 100
+	revelationtime = 80
+	darktime = 70
+	finishtime = 150
 
 
 	zoomamount = 2
@@ -123,6 +126,8 @@ function reset()
 	player.im = buff1
 	player.wordplace = 4
 	mode = 1
+
+	rand1, rand2, rand3, rand4, rand5, rand6 = 0, 0, 0, 0, 0, 0
 end
 
 function nextTurn()
@@ -138,7 +143,7 @@ function g3_textinput(t)
 				addsweat(player.x-15*player.scale+cu.floRan(-4,4), player.y-40*player.scale+cu.floRan(-4,4))
 				addsweat(player.x+15*player.scale+cu.floRan(-4,4), player.y-40*player.scale+cu.floRan(-4,4))
 			end
-		else
+		elseif mode == 2 then
 			failure = true
 			wrongchar = t
 		end
@@ -173,18 +178,6 @@ function g3_update()
 		end
 	elseif mode == 2 then
 
-		if failure then
-			if zoomy < zoomamount  then
-				zoomy = zoomy + zoomamount/zoomtime
-			else
-				timer = timer + 1
-				player.im = buffrevelation
-				if timer > revelationtime then
-					mode = 3
-					timer = 0
-				end
-			end
-		end
 
 		if currentChar >= #currentSentence/3 and currentChar <= #currentSentence*(2/3) then
 			player.im = buff2
@@ -201,6 +194,20 @@ function g3_update()
 			clock = clock - 1
 			if clock == 0 then
 				failure = true
+			end
+		end
+
+
+		if failure then
+			if zoomy < zoomamount  then
+				zoomy = zoomy + zoomamount/zoomtime
+			else
+				timer = timer + 1
+				player.im = buffrevelation
+				if timer > revelationtime then
+					mode = 3
+					timer = 0
+				end
 			end
 		end
 	elseif mode == 3 then
@@ -223,28 +230,31 @@ function g3_draw()
 		lg.setColor(255,0,0,70)	
 		lg.arc("fill", "pie", 181*4+2, 24*4+2, 60, -math.pi/2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2, 1000)
 		lg.setColor(0,0,0)	
-		lg.draw(dot, 181*4+2, 24*4+2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2-math.pi/2, 2, 60)
+		lg.draw(dot, 181*4+2, 24*4+2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi, 2, 60)
 		lg.setColor(255,255,255)
+		lg.draw(clockmask,0,0,0,4,4)
+		lg.setColor(255,255,255,255-timer*5)
 		lg.draw(clockmaskinstructions,0,0,0,4,4)
+		cclear()
 
 		lg.draw(player.im,player.x,player.y,0,4,4,70,80)
 		setPlayerColor(currentPlayer)
 		lg.printf(difficulty, 10, 10, 1000, "left")
 
-		lg.setColor(0,0,0,math.min(timer,100))
+		lg.setColor(0,0,0,math.min(timer,170))
 		lg.rectangle("fill",0,0,1000,1000)
 		cclear()
 	elseif mode == 2 then
 		lg.draw(background,0,0,0,4,4)
-		lg.setColor(255,0,0,70)	
-		lg.arc("fill", "pie", 181*4+2, 24*4+2, 40, -math.pi/2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2, 1000)
+		lg.setColor(255,0,0,70+rand1)	
+		lg.arc("fill", "pie", 181*4+2, 24*4+2, 40, -math.pi/2, (((clock/secondDuration)/(secondIntervals))-clock)*2*math.pi-math.pi, 1000)
 		lg.setColor(0,0,0)	
-		lg.draw(dot, 181*4+2, 24*4+2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2-math.pi/2, 2, 40)
+		lg.draw(dot, 181*4+2, 24*4+2, (((clock/secondDuration)/(secondIntervals))-clock)*2*math.pi-math.pi, 2, 40)
 		lg.setColor(255,255,255)
 		lg.draw(clockmask,0,0,0,4,4)
 
 
-		lg.setColor(0,0,0,100)
+		lg.setColor(0,0,0,170)
 		lg.rectangle("fill",0,0,1000,1000)
 		cclear()
 
@@ -261,11 +271,11 @@ function g3_draw()
 
 		lg.draw(player.im,player.x+rand5*7,player.y+rand6*7,0,4,4,70,80)
 		lg.setColor(200,200,200)
-		lg.printf(currentSentence, 55+rand1*10, 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 600, "left")
-		lg.printf(currentSentence, 55+rand3*10, 10*rand4+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 600, "left")
+		lg.printf(currentSentence, 180+rand1*10, 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 800-180, "left")
+		lg.printf(currentSentence, 180+rand3*10, 10*rand4+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 800-180, "left")
 		setPlayerColor(currentPlayer)
-		lg.printf(currentTry, 55+rand1*10, 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 600, "left")
-		lg.printf(currentTry, 55+rand3*10, 10*rand4+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 600, "left")
+		lg.printf(currentTry, 180+rand1*10, 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 800-180, "left")
+		lg.printf(currentTry, 180+rand3*10, 10*rand4+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 800-180, "left")
 
 
 		drawsweat()

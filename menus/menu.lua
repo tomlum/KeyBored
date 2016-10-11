@@ -25,13 +25,7 @@ function menuSwitch()
     game = 1
   elseif MODE == "PLAY" and oldMode ~= "PLAY" then
     highscore = save.highscores[game]
-    if game == 1 then
-      g1_load()
-    elseif game == 2 then
-      g2_load()
-    elseif game == 3 then
-      g3_load()
-    end
+    loadGames()
     fade = 255
   elseif MODE == "RESULTS" and oldMode ~= "RESULTS"  then
 
