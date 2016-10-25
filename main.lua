@@ -17,7 +17,7 @@ function love.load()
 	debug = false
 	--TITLE -> SELECT -> PLAY -> RESULTS
 	MODE = "PLAY"
-	game = 5
+	game = 3
 	------------------------
 	------------------------
 

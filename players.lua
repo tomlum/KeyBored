@@ -27,13 +27,18 @@ playerColors = {
 
 function setPlayerColor(playerNum)
 	local color = playerColors[playerNum+1]
-    lg.setColor(color[1], color[2], color[3])
+	lg.setColor(color[1], color[2], color[3])
 end
 
-function swapPlayerColor(playerNum)
-	colorSwap.send({nil, nil, nil, nil, playerColors[playerNum+1]})
+function swapPlayerColor(playerNum, c)
+	if c == "g"	then
+		colorSwap.send({nil, playerColors[playerNum+1]})
+	elseif c == "m" then
+		colorSwap.send({nil, nil, nil, nil, playerColors[playerNum+1]})
+	end
 	colorSwap.set()
 end
+
 
 function unsetPlayerColor()
 	lg.setColor(255,255,255)

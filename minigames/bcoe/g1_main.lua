@@ -204,7 +204,7 @@ function g1_draw()
 	lg.setColor(255,255,255)
 
 
-	swapPlayerColor(currentPlayer)
+	swapPlayerColor(currentPlayer, "m")
 	if trick ~= nil then
 		lg.draw(im_board, 0, skater.y)
 		lg.draw(skater.im, 0, skater.y)
