@@ -1,5 +1,8 @@
 --Roundscrore written on board in back?
 --Tally for how many tries left?
+--One epilogue is being a sniper
+
+--Sample of weights for 80's song
 
 --Gongish Sound for failing
 --French voice (female/male?)
@@ -68,6 +71,7 @@ background = g3NewImage("background.png")
 clockmask = g3NewImage("clockmask.png")
 clockmaskinstructions = g3NewImage("clockmaskinstructions.png")
 dot = g3NewImage("dot.png")
+s_weight = g3NewSource("weight.mp3")
 
 function g3_load()
 	lg.setBackgroundColor(100,100,100)
@@ -179,6 +183,8 @@ function g3_update()
 		if lk.isClick("up") and difficulty < #sentences then
 			difficulty = difficulty + 1
 			weightWobbleTimer = weightWobbleTime
+			s_weight:setPitch(cu.floRan(.8,1.2))
+			cu.repplay(s_weight)
 		elseif lk.isClick("down") and difficulty > 1 then
 			difficulty = difficulty - 1
 		elseif lk.isClick("left") and time_difficulty > 2 then

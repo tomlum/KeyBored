@@ -1,5 +1,5 @@
---Make the button pull be an additional force, pulls on things that aren't 
---in its orbit
+--Move force is affected by all planets?  or just those pulling?
+
 
 function g5NewImage(filePath)
 	return lg.newImage("minigames/ams/"..filePath)
@@ -27,8 +27,10 @@ function g5_load()
 	drawForcess = true
 	planets = {}
 	suns = {}
-	table.insert(suns, {x=300, y = height/2, lr = 1, size = 2})
-	table.insert(suns, {x=width-300, y = height/2, lr = -1, size = 2})
+	table.insert(suns, {num = 1, key = "q", x=300, y = height*1/4, lr = 1, size = 1})
+	table.insert(suns, {num = 2, key = "z", x=300, y = height*3/4, lr = 1, size = 1})
+	table.insert(suns, {num = 3, key = "p", x=width-300, y = height*1/4, lr = -1, size = 1})
+	table.insert(suns, {num = 4, key = "m", x=width-300, y = height*3/4, lr = -1, size = 1})
 
 	time = 0
 
@@ -46,32 +48,32 @@ function g5_load()
 	function updatePlanets()
 		for i,planet in ipairs(planets) do
 			sundis = -1
-			mysun = suns[0]
+			planet.mysun = suns[0]
 			for j,sun in ipairs(suns) do
-				x = cu.dis(planet.x, planet.y, sun.x, sun.y)/sun.size
-				if sundis == -1 or x < sundis then
-					sundis = x
-					mysun = suns[j]
+				thisSunDis = cu.dis(planet.x, planet.y, sun.x, sun.y)/sun.size
+				if sundis == -1 or thisSunDis < sundis then
+					sundis = thisSunDis
+					planet.mysun = suns[j]
 				end
 			end
 
-			dis = cu.dis(planet.x, planet.y, mysun.x, mysun.y)
+			dis = cu.dis(planet.x, planet.y, planet.mysun.x, planet.mysun.y)
 
 			orbitang = math.atan2(planet.orbitxv+planet.xv,-planet.orbitxv-planet.yv)-math.pi/2
-			sunang =  math.atan2((mysun.x-planet.x),(mysun.y-planet.y))-math.pi/2
+			sunang =  math.atan2((planet.mysun.x-planet.x),(planet.mysun.y-planet.y))-math.pi/2
 			difang =  orbitang%(2*math.pi) - sunang%(2*math.pi)
 
 			disone = cu.dis(planet.x + planet.orbitxv*10 + planet.xv, planet.y - planet.orbityv*10 - planet.yv, planet.x + math.cos(sunang+math.pi/2)*10, planet.y - math.sin(sunang+math.pi/2)*10)
 			distwo = cu.dis(planet.x + planet.orbitxv*10 + planet.xv, planet.y - planet.orbityv*10 - planet.yv, planet.x + math.cos(sunang-math.pi/2)*10, planet.y - math.sin(sunang-math.pi/2)*10)
 			
 			if disone < distwo then
-				orbitang =  sunang+(math.pi/2)-(mysun.size/gravspeed)
+				orbitang =  sunang+(math.pi/2)-(planet.mysun.size/gravspeed)
 			else
-				orbitang =  sunang-(math.pi/2)+(mysun.size/gravspeed)
+				orbitang =  sunang-(math.pi/2)+(planet.mysun.size/gravspeed)
 			end
 
-			planet.orbitxv = (math.cos(orbitang)/math.sqrt(dis))*planet.size*mysun.size*speed
-			planet.orbityv = (math.sin(orbitang)/math.sqrt(dis))*planet.size*mysun.size*speed
+			planet.orbitxv = (math.cos(orbitang)/math.sqrt(dis))*planet.size*planet.mysun.size*speed
+			planet.orbityv = (math.sin(orbitang)/math.sqrt(dis))*planet.size*planet.mysun.size*speed
 
 			--orbitxdir = orbitx/math.abs(orbitx)
 			--orbitydir = orbity/math.abs(orbity)
@@ -80,7 +82,7 @@ function g5_load()
 
 			planet.x = planet.x + planet.orbitxv*10 + planet.xv
 			planet.y = planet.y - planet.orbityv*10 + planet.yv
-		
+
 
 
 			if drawForces then	
@@ -160,10 +162,26 @@ function slowWobble(planet)
 end
 
 function g5_update()
-	if lk.isDown("space") then
-		suns[1].size = math.min(suns[1].size*1.01, 8)
-	else
-		suns[1].size = math.max(suns[1].size/1.01, 2)
+	updatePlanets()
+	for i,sun in ipairs(suns) do
+		if lk.isClick(sun.key) then
+			sun.size = sun.size + .1
+			for i,planet in ipairs(planets) do
+				if planet.mysun.num ~= sun.num then
+					dis = cu.dis(planet.x, planet.y, sun.x, sun.y)/400
+					sunang =  math.atan2((sun.x-planet.x),(sun.y-planet.y))-math.pi/2
+					planet.xv = planet.xv + ((sun.size*planet.size)/(dis*dis))*math.cos(sunang)
+					planet.yv = planet.yv - ((sun.size*planet.size)/(dis*dis))*math.sin(sunang)
+
+				end
+			end
+		else
+			if sun.size >= 1 then
+				sun.size = sun.size-.005
+			else
+				sun.size = 1
+			end
+		end
 	end
 	time = time + 1
 	if time%1 == 0 and time < 20 then
@@ -176,9 +194,7 @@ end
 
 function g5_draw()
 	for i,sun in ipairs(suns) do
-		lg.draw(im_sun, sun.x, sun.y, 0, sun.size*sun.lr, sun.size, 20, 20)
+		lg.draw(im_sun, sun.x, sun.y, 0, sun.size*sun.size*sun.lr, sun.size*sun.size, 20, 20)
 	end
-	updatePlanets()
 	drawPlanets()
-	lg.print(orbitang, 10, 10)
 end

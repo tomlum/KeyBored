@@ -2,7 +2,7 @@ function love.load()
 
 	--Game Initializers
 	require "utilities/utilities"
-	la.setVolume(0)
+	la.setVolume(1)
 	lw.setMode(1200,750)
 	math.randomseed(os.clock())
 	lg.setDefaultFilter("linear","nearest",1)
@@ -17,7 +17,7 @@ function love.load()
 	debug = false
 	--TITLE -> SELECT -> PLAY -> RESULTS
 	MODE = "PLAY"
-	game = 3
+	game = 5
 	------------------------
 	------------------------
 
