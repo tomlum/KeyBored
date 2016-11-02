@@ -1,3 +1,6 @@
+--Fin
+--Plackard with the names
+--Animate bars as moving along with character blaaaaa
 --Roundscrore written on board in back?
 --Tally for how many tries left?
 --One epilogue is being a sniper
@@ -35,6 +38,7 @@ end
 function g3NewSource(filePath)
 	return la.newSource("minigames/lb/assets/"..filePath)
 end
+g3Vol = 1
 
 
 sweat = {}
@@ -71,7 +75,24 @@ background = g3NewImage("background.png")
 clockmask = g3NewImage("clockmask.png")
 clockmaskinstructions = g3NewImage("clockmaskinstructions.png")
 dot = g3NewImage("dot.png")
+
 s_weight = g3NewSource("weight.mp3")
+s_remove_weight = g3NewSource("remove_weight.wav")
+s_remove_weight:setVolume(g3Vol-.5)
+s_idle = g3NewSource("idle.wav")
+s_idle:setVolume(g3Vol+1.5)
+s_orchestra = g3NewSource("orchestra.mp3")
+s_orchestra:setVolume(g3Vol)
+s_idle:setLooping(true)
+s_bell = g3NewSource("bell.wav")
+s_tick = g3NewSource("tick.mp3")
+s_tick:setVolume(g3Vol-.9)
+s_tick:setPitch(1.8)
+
+
+s_liftsong1 = g3NewSource("liftsong1.mp3")
+s_liftsong1:setVolume(g3Vol)
+s_gymno = g3NewSource("gymno.mp3")
 
 function g3_load()
 	lg.setBackgroundColor(100,100,100)
@@ -104,7 +125,7 @@ function g3_load()
 	currentPlayer = 1
 	rounds = 3
 
-	readytime = 130
+	readytime = 330
 	zoomtime = 300
 	zoomamount = 1.7
 	revelationtime = 80
@@ -152,6 +173,9 @@ function reset()
 	mode = 1
 
 	rand1, rand2, rand3, rand4, rand5, rand6 = 0, 0, 0, 0, 0, 0
+	s_idle:play()
+	s_gymno:stop()
+	s_bell:stop()
 end
 
 function nextTurn()
@@ -187,16 +211,21 @@ function g3_update()
 			cu.repplay(s_weight)
 		elseif lk.isClick("down") and difficulty > 1 then
 			difficulty = difficulty - 1
+			s_remove_weight:setPitch(cu.floRan(.8,1.2))
+			cu.repplay(s_remove_weight)
 		elseif lk.isClick("left") and time_difficulty > 2 then
 			time_difficulty = time_difficulty - 1
+			cu.repplay(s_tick)
 		elseif lk.isClick("right") and time_difficulty < secondIntervals then
 			time_difficulty = time_difficulty + 1
+			cu.repplay(s_tick)
 		elseif lk.isClick("return") and timer == 0 then
 			currentSentence = sentences[difficulty][math.random(#sentences[difficulty])]
 			currentLinesHeight = sentenceLinesHeight[difficulty][math.random(#sentences[difficulty])]
 			clock = time_difficulty*secondDuration
 			clockbet = clock
 			timer = 1
+			s_orchestra:play()
 		end
 		if timer > 0 then
 			timer = timer + 1
@@ -204,9 +233,13 @@ function g3_update()
 			if timer > readytime then
 				mode = 2
 				timer = 0
+				zoomy = 1.1
 			end
 		end
-	elseif mode == 2 then
+	elseif mode == 2 then	
+		s_idle:stop()
+		s_orchestra:stop()
+		s_liftsong1:play()
 
 
 		if currentChar >= #currentSentence/3 and currentChar <= #currentSentence*(2/3) then
@@ -230,6 +263,9 @@ function g3_update()
 
 
 		if failure then
+			s_liftsong1:stop()
+			s_gymno:play()
+			s_bell:play()
 			if zoomy < zoomamount  then
 				zoomy = zoomy + zoomamount/zoomtime
 			else
@@ -293,6 +329,7 @@ function g3_draw()
 		lg.rectangle("fill",0,0,1000,1000)
 		cclear()
 	elseif mode == 2 then
+		s_liftsong1:play()
 		lg.draw(background,0,0,0,4,4)
 		lg.setColor(255,0,0,70+rand1)	
 		lg.arc("fill", "pie", 181*4+2, 24*4+2, 40, -math.pi/2, (((clock)/(secondIntervals*secondDuration)))*2*math.pi-math.pi/2, 1000)

@@ -1,5 +1,5 @@
 function love.load()
-
+	
 	--Game Initializers
 	require "utilities/utilities"
 	la.setVolume(1)

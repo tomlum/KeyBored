@@ -25,9 +25,13 @@ playerColors = {
 }
 
 
-function setPlayerColor(playerNum)
-	local color = playerColors[playerNum+1]
-	lg.setColor(color[1], color[2], color[3])
+function setPlayerColor(playerNum, a)
+	if a == nil then a = 255 end
+		local color = playerColors[playerNum+1]
+	if color == nil then return
+	else
+		lg.setColor(color[1], color[2], color[3], a)
+	end
 end
 
 function swapPlayerColor(playerNum, c)
