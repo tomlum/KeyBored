@@ -1,15 +1,19 @@
 function love.load()
 	
+	SCREENWIDTH = 16*40
+	SCREENHEIGHT = 9*40
+	FULLSCREEN = false
+
 	--Game Initializers
 	require "utilities/utilities"
 	la.setVolume(1)
-	lw.setMode(1200,750)
 	math.randomseed(os.clock())
 	lg.setDefaultFilter("linear","nearest",1)
 	require "menus/menu"
 	require "players"
 	require "minigames/minigames"
 
+	love.window.setMode(SCREENWIDTH, SCREENHEIGHT, {fullscreen=FULLSCREEN, vsync=true, msaa=0})
 
 	------------------------
 	--USEFUL DEBUG GLOBALS--
@@ -17,7 +21,7 @@ function love.load()
 	debug = false
 	--TITLE -> SELECT -> PLAY -> RESULTS
 	MODE = "PLAY"
-	game = 5
+	game = 3
 	------------------------
 	------------------------
 
@@ -60,7 +64,7 @@ function love.update()
 		elseif MODE == "SELECT" then
 			updateSelect()
 		elseif MODE == "PLAY" then
-				updateGames()
+			updateGames()
 		elseif MODE == "RESULTS" then
 			updateResults()
 		end
@@ -71,6 +75,7 @@ end
 
 function love.draw()
 	updateCamera()
+	simpleScale.transform()	
 	if MODE == "TITLE" then
 		drawTitle()
 	elseif MODE == "SELECT" then
@@ -86,6 +91,8 @@ function love.draw()
 
 	drawFade()
 	drawPause()
+
+	simpleScale.letterBox()
 
 	if debug then
 		lg.print("MODE: "..MODE, 10, 10)

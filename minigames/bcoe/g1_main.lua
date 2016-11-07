@@ -9,7 +9,7 @@ end
 require "minigames/bcoe/tricks"
 
 function g1_load()
-	simpleScale.setScreen(144, 90, 1200, 750, {fullscreen=false, vsync=true, msaa=0})
+	simpleScale.updateScreen(160, 90,  SCREENWIDTH, SCREENHEIGHT)
 	im_skater = g1NewImage("skater.png")
 	im_airskater = g1NewImage("airskater.png")
 	im_board = g1NewImage("board.png")
@@ -188,7 +188,6 @@ function g1_nextTurn()
 end
 
 function g1_draw()
-	simpleScale.transform()
 	lg.setColor(255,255,255)
 	lg.draw(im_background, 0, 0, 0, 1, 1)
 	lg.draw(im_trees,treesx, 10, 0)
@@ -248,5 +247,4 @@ function g1_draw()
 	lg.printf("Player "..currentPlayer, 2, -1, 80, "left")
 	lg.printf("Trys Left "..trysLeft, 2, 7, 80, "left")
 	hitkey = false
-	simpleScale.letterBox()
 end

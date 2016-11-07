@@ -26,9 +26,11 @@ function updateClick2()
 end
 
 function updateCoords()
-	center = {x = lg.getWidth()/2, y = lg.getHeight()/2}
-	width = lg.getWidth()
-	height = lg.getHeight()
+
+	width = 1200
+	height = 675
+
+	center = {x = width/2, y = height/2}
 end
 
 mouse = {}

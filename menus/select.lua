@@ -33,7 +33,7 @@ function updateSelect()
     if camera.y-camera.j <= upSelectY then
       camera.j = 0
       camera.y = upSelectY
-      if lk.isDown("return") and game <= numberOfGames then
+      if lk.isDown("return") and game <= numOfGames then
         fadeV = -3
       end
       if lk.isDown("backspace") then

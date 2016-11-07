@@ -35,6 +35,31 @@ function simpleScale.setScreen(gw, gh, sw, sh, settings)
 	end
 end
 
+function simpleScale.updateScreen(gw, gh, sw, sh, settings)	
+	gAspectRatio = gw/gh
+	gameW, gameH, screenW, screenH = gw, gh, love.graphics.getWidth(), love.graphics.getHeight()
+	sAspectRatio = screenW/screenH
+
+	--Screen aspect ratio is TALLER than game
+	if gAspectRatio > sAspectRatio then
+		scale = screenW/gameW
+
+		xt = 0
+		yt = screenH/2 - (scale*gameH)/2
+
+	--Screen aspect ratio is WIDER than game
+	elseif gAspectRatio < sAspectRatio then
+		scale = screenH/gameH
+
+		xt = screenW/2 - (scale*gameW)/2
+		yt = 0
+	else
+		scale = screenW/gameW
+		xt = 0
+		yt = 0
+	end
+end
+
 -- Transforms screen geometry. Call this at the beginning of love.draw().
 function simpleScale.transform()
 	love.graphics.translate(xt, yt)
@@ -46,13 +71,14 @@ function simpleScale.letterBox(color)
 	local originalColor = love.graphics.getColor()
 	boxColor = color or {0,0,0}
 	lg.setColor(boxColor)
+	--Vertical bars
 	if gAspectRatio > sAspectRatio then
-		love.graphics.rectangle("fill", 0, 0, screenW/scale, -(yt/scale)-1)
-		love.graphics.rectangle("fill", gameW, 0, screenW/scale, (yt/scale)+1)
+		love.graphics.rectangle("fill", 0, 0, screenW/scale, -screenW/scale)
+		love.graphics.rectangle("fill", 0, gameH, screenW/scale, screenW/scale)
+	--Horizontal bars
 	elseif gAspectRatio < sAspectRatio then
-		love.graphics.rectangle("fill", 0, 0, -(xt/scale)-1, screenH)
-		love.graphics.rectangle("fill", gameW, 0, (xt/scale)+1, screenH)
-
+		love.graphics.rectangle("fill", 0, 0, -(xt/scale)-1, screenH/scale)
+		love.graphics.rectangle("fill", gameW, 0, (xt/scale)+1, screenH/scale)
 	end
 	love.graphics.setColor(r,g,b,a)
 end

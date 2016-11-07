@@ -4,11 +4,14 @@ require "minigames/lb/g3_main"
 require "minigames/wntt/g4_main"
 require "minigames/ams/g5_main"
 
-numberOfGames = 5
-save = {highscores = {0}}
+numOfGames = 5
+save = {highscores = {0,0,0,0,0}}
 --Get the highscores
 if love.filesystem.exists("Save.lua") then
-	save = Tserial.unpack(love.filesystem.read("Save.lua"))
+	newsave = Tserial.unpack(love.filesystem.read("Save.lua"))
+	if #newsave == #save then
+		save = newsave
+	end
 end
 
 function keypressGames(key)

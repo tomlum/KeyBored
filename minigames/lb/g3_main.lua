@@ -46,7 +46,8 @@ end
 g3Vol = 1
 
 function g3_load()
-
+	lg.setBackgroundColor(100,100,100)
+	simpleScale.updateScreen(800, 450,  SCREENWIDTH, SCREENHEIGHT)
 
 	buff1 = g3NewImage("buff1.png")
 	buff2 = g3NewImage("buff2.png")
@@ -77,17 +78,19 @@ function g3_load()
 	s_tick:setVolume(g3Vol-.9)
 	s_tick:setPitch(1.8)
 
-
 	s_liftsong1 = g3NewSource("liftsong1.mp3")
 	s_liftsong1:setVolume(g3Vol-.7)
 	s_gymno = g3NewSource("gymno.mp3")
 	s_explosion = g3NewSource("explosion.mp3")
 
-	sweat = {}
-	sounds = {g3NewSource("elephant.wav")}
+	victorySounds = {g3NewSource("elephant.wav")}
 
-	lg.setBackgroundColor(100,100,100)
-	simpleScale.setScreen(800, 450, 16*40, 9*40, {fullscreen=false, vsync=true, msaa=0})
+	lbFont = lg.newFont("assets/fonts/munro.ttf", 20)
+	lbWrongFont = lg.newFont("assets/fonts/munro.ttf", 80)
+	revelationFont = lg.newFont("assets/fonts/Athelas.ttc", 30)
+	lg.setFont(lbFont)
+
+	sweat = {}
 
 	sentences = {
 		{"Memento Mori",}
@@ -110,16 +113,13 @@ function g3_load()
 		{3}
 		,
 	}
+
 	numOfEpilogues = 1
 
-	mode = 1
-	currentPlayer = 1
-	rounds = 3
-
-	readytime = 0--330
+	readytime = 330
 	zoomtime = 375
 	victorytime = 200
-	fintime = 140
+	fintime = 150
 	zoomamount = 1.7
 	revelationtime = 50
 	darktime = 97
@@ -127,18 +127,11 @@ function g3_load()
 
 	weightWobbleTime = 8
 
-
-
-
 	player = {x = 400, y = 400, scale = 4}
+	currentPlayer = 1
+	rounds = 1--3
+
 	reset()
-
-	lbFont = lg.newFont("assets/fonts/munro.ttf", 20)
-	lbWrongFont = lg.newFont("assets/fonts/munro.ttf", 80)
-	revelationFont = lg.newFont("assets/fonts/Athelas.ttc", 30)
-	lg.setFont(lbFont)
-
-
 end
 
 function reset()
@@ -280,7 +273,7 @@ function g3_update()
 			victory = true
 			s_explosion:play()
 			for i = 1, difficulty do
-				sounds[math.random(#sounds)]:play()
+				victorySounds[math.random(#victorySounds)]:play()
 			end
 			weightDrawY = 134
 			mode = 4
@@ -334,7 +327,6 @@ function g3_update()
 end
 
 function g3_draw()
-	simpleScale.transform()
 	lg.push()
 	lg.translate(-(((zoomy*800)-800)/2),-(((zoomy*(500-190))-(500-190))/2))
 	lg.scale(zoomy, zoomy)
@@ -369,10 +361,7 @@ function g3_draw()
 				lg.draw(weight,player.x+28*4+(i*4*4),player.y-(3 + weightDrawY)*4,0,4,4,2, 8)
 			end
 		end
-
-		setPlayerColor(currentPlayer)
-		lg.printf(difficulty, 10, 10, 1000, "left")
-
+		
 		lg.setColor(0,0,0,math.min(timer,170))
 		lg.rectangle("fill",0,0,1000,1000)
 		cclear()
@@ -494,6 +483,4 @@ function g3_draw()
 		end
 		lg.setFont(lbFont)
 	end
-
-	simpleScale.letterBox()
 end

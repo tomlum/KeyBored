@@ -11,6 +11,29 @@ function cu.pDis(p1, p2)
 	return math.sqrt((p1.x-p2.x)^2 + (p1.y-p2.y)^2)
 end
 
+
+--Returns the highest value in a contiguously constructed table
+function cu.highest(table)
+	highest = table[1]
+	for i=1, #table do
+		if table[i] > highest then
+			highest = table[i]
+		end
+	end
+	return highest
+end
+
+--Returns the lowest value in a contiguously constructed table
+function cu.lowest(table)
+	lowest = table[1]
+	for i=1, #table do
+		if table[i] < lowest then
+			lowest = table[i]
+		end
+	end
+	return lowest
+end
+
 --Shuffles the items in a table
 function cu.shuffle(t)
 	local j

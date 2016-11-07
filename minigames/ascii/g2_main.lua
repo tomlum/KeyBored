@@ -7,7 +7,7 @@ function g2_load()
 	end
 	Text = require ("minigames/ascii/Text")
 
-	simpleScale.setScreen(800, 500, 1200, 750, {fullscreen=false, vsync=true, msaa=0})
+	simpleScale.updateScreen(800, 450, SCREENWIDTH, SCREENHEIGHT)
 
 	lg.setDefaultFilter("linear","nearest",1)
 	fontSize = 80
@@ -100,14 +100,14 @@ function g2_update(dt)
 			if #lines*canvasFont:getHeight() > 500 or char == " " then
 				mode = "vote"
 				votePhrase = Text(0, 0, '['..votePhrases[math.random(#votePhrases)]..'](move)', {
-				font = phraseFont,
-				wrap_width = 300,
-				align_ceter = true,
-				move = function(dt, c)
-					c.x = c.x + math.cos(rot/10+(10+c.position)%10)/8
-					c.y = c.y + math.sin(rot/10+(10+c.position)%10)/8
-				end
-				})
+					font = phraseFont,
+					wrap_width = 300,
+					align_ceter = true,
+					move = function(dt, c)
+						c.x = c.x + math.cos(rot/10+(10+c.position)%10)/8
+						c.y = c.y + math.sin(rot/10+(10+c.position)%10)/8
+					end
+					})
 			else
 				canvas = canvas..char
 			end
@@ -155,7 +155,6 @@ function g2_update(dt)
 end
 
 function g2_draw()
-	simpleScale.transform()
 	if mode == "select" then
 		setPlayerColor(artist)
 		lg.setFont(font1)
@@ -189,6 +188,5 @@ function g2_draw()
 		lg.printf(groups[theGroup][3], 200+math.cos(rot/12)*(10/3), 75+20+650-font3:getHeight()/2+math.sin(rot/12)*(10/3)+ -(phraseY), 150, "center")
 		lg.printf(groups[theGroup][4], 100+math.cos(rot/13)*(10/3), 75+20+700-font4:getHeight()/2+math.sin(rot/13)*(10/3)+ -(phraseY), 150, "center")
 	end
-		unsetPlayerColor()
-	simpleScale.letterBox()
+	unsetPlayerColor()
 end

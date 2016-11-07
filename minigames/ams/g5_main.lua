@@ -32,12 +32,13 @@ end
 
 
 function g5_load()
-	simpleScale.setScreen(800, 450, 16*60, 9*60, {fullscreen=false, vsync=true, msaa=0})
+	simpleScale.updateScreen(800, 450, SCREENWIDTH, SCREENHEIGHT)
 	drawForcess = true
 	planets = {}
 	suns = {}
+	stars = {}
 
-	gameLength = 200
+	gameLength = 2000
 
 	numOfPlanets = 6
 	planetCap = 100
@@ -49,6 +50,8 @@ function g5_load()
 	im_saturn = g5NewImage("saturn.png")
 	im_neptune = g5NewImage("neptune.png")
 	im_earth = g5NewImage("earth.png")
+	im_star = g5NewImage("star.png")
+	im_galaxy = g5NewImage("galaxy.png")
 	G = 70
 	S = 10
 	realG = false
@@ -86,6 +89,12 @@ function g5_load()
 	respawnTime = 100
 	appearTime = 180
 
+	numberOfStars = 300
+	zoomOutTime = 150
+	startMovingTime = zoomOutTime-100
+	fadeTime = 140
+
+
 	table.insert(suns, {num = 1, key = "q", x=400 - 450*1/4, y = 450*1/4, lr = 1, size = 1, speed = 1, spin = 0, deadtimer = 1, orbitDistance = sunDistances})
 	table.insert(suns, {num = 2, key = "z", x=400 - 450*1/4, y = 450*3/4, lr = 1, size = 1, speed = 1, spin = 0, deadtimer = 1, orbitDistance = sunDistances})
 	table.insert(suns, {num = 3, key = "p", x=400 + 450*1/4, y = 450*1/4, lr = -1, size = 1, speed = 1, spin = 0, deadtimer = 1, orbitDistance = sunDistances})
@@ -93,7 +102,20 @@ function g5_load()
 	suns[0] = {num = 1, key = "nothing", x=-1000, y = -1000, lr = 1, size = .1, speed = 1, spin = 0, deadtimer = 1, orbitDistance = sunDistances}
 
 	time = 0
+	time2 = 0
 	zoom = 1
+
+	for i = 0, numberOfStars do
+		table.insert(stars, {x = cu.floRan(-1500,800+1500), y = cu.floRan(-1200+450,1200), size = cu.floRan(.5,1.5), flicker = cu.floRan(10), rot = cu.floRan(-math.pi/4, math.pi/4)})
+	end
+end
+
+
+function drawStars()
+	for i,v in ipairs(stars) do 
+		v.flicker = v.flicker + .01
+		lg.draw(im_star, v.x, v.y, rot, v.size*math.sin(v.flicker), v.size*math.sin(v.flicker), 12.5, 12.5)
+	end
 end
 
 function insertPlanet(kind, x, y, xv, yv, size)
@@ -358,11 +380,12 @@ function g5_update()
 		time = time + 1
 		if time >= gameLength then
 			for i,planet in ipairs(planets) do
-				planet.oldx = planet.x
-				planet.oldy = planet.y
+				planet.finalAng = math.atan2(planet.x - planet.mySun.x, -(planet.y - planet.mySun.y))-math.pi/2
+				planet.finalDis = cu.dis(planet.x, planet.y, planet.mySun.x, planet.mySun.y)
 			end
 		end
 	else
+		time2 = time2 + 1
 		for i,sun in ipairs(suns) do
 
 			sun.size = sun.size + .0001
@@ -372,28 +395,62 @@ function g5_update()
 				sun.lr = 1
 			end
 
-			sun.x = 400 + math.cos(sunOrbitSpeed*time/800+(sun.num*math.pi/2)+math.pi/4)*sun.orbitDistance/(zoom)
-			sun.y = 225 + math.sin(sunOrbitSpeed*time/800+(sun.num*math.pi/2)+math.pi/4)*sun.orbitDistance/(zoom)
+			sun.x = 400 + math.cos(sunOrbitSpeed*time/800+(sun.num*math.pi/2)+math.pi/4)*(sun.orbitDistance+math.max(0, (time2 - zoomOutTime + startMovingTime)))
+			sun.y = 225 + math.sin(sunOrbitSpeed*time/800+(sun.num*math.pi/2)+math.pi/4)*(sun.orbitDistance+math.max(0, (time2 - zoomOutTime + startMovingTime)))
+			
 		end
 
 		for i,planet in ipairs(planets) do
-			planet.x = planet.oldx + math.cos(sunOrbitSpeed*time/800+(planet.mySun.num*math.pi/2)+math.pi/4)*planet.mySun.orbitDistance/(zoom)
-			planet.y = planet.oldy + math.sin(sunOrbitSpeed*time/800+(planet.mySun.num*math.pi/2)+math.pi/4)*planet.mySun.orbitDistance/(zoom)
+			planet.x = planet.mySun.x + math.cos(planet.finalAng)*planet.finalDis
+			planet.y = planet.mySun.y + math.sin(planet.finalAng)*planet.finalDis
 		end
 
-		zoom = zoom-.001
+		if time2 < zoomOutTime then 
+			zoom = zoom*.99
+		end
+	end
+
+	if time2 > zoomOutTime + startMovingTime + fadeTime then
+		fadeV = -7
+	end
+
+	if fade == 0 then
+		sunScores = {0, 0, 0, 0}
+		for i,planet in ipairs(planets) do
+			sunScores[planet.mySun.num] = sunScores[planet.mySun.num]+planet.size
+		end
+		winningScore = sunScores[1]
+			winner = 1
+		for i = 1, 4 do
+			winner = i
+			if sunScores[i] > winningScore then
+				winningScore = sunScores[i]
+				winner = i
+			end
+		end
+
+		MODE = "RESULTS"
+	end
+end
+
+function drawGalaxies()
+	for i,sun in ipairs(suns) do
+		local x = 400 + math.cos(sunOrbitSpeed*time/800+(sun.num*math.pi/2)+math.pi/4)*1600
+		local y = 225 + math.sin(sunOrbitSpeed*time/800+(sun.num*math.pi/2)+math.pi/4)*1600
+
+		lg.draw(im_galaxy,x,y,time2/100,20,20,25,25)
+		sun.orbitDistance = sun.orbitDistance+math.sin((time/160)+(math.pi/2)*i)/8--18
 	end
 end
 
 
-
 function g5_draw()
-	simpleScale.transform()	
 	lg.push()
 	lg.translate(-(((zoom*800)-800)/2),-(((zoom*450)-450)/2))
 	lg.scale(zoom, zoom)
+	drawStars()
 	drawPlanets()
 	drawSuns()
+	drawGalaxies()
 	lg.pop()
-	simpleScale.letterBox()
 end
