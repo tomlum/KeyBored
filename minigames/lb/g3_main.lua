@@ -1,4 +1,8 @@
---Fin
+--Strikes doesn't work... jarring to find your place again
+--Mark the current record with gold ghost weight
+--Fix Saves
+
+
 --Scream on victory, random victory noise
 --explosion sound effect
 --Applause, flexing pose 
@@ -361,7 +365,7 @@ function g3_draw()
 				lg.draw(weight,player.x+28*4+(i*4*4),player.y-(3 + weightDrawY)*4,0,4,4,2, 8)
 			end
 		end
-		
+
 		lg.setColor(0,0,0,math.min(timer,170))
 		lg.rectangle("fill",0,0,1000,1000)
 		cclear()
