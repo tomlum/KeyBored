@@ -1,3 +1,6 @@
+--Cooler meter bar (it's a skateboard)
+--Paralx, billboard, plane with banner
+
 function g1NewImage(filePath)
 	return lg.newImage("minigames/bcoe/assets/"..filePath)
 end

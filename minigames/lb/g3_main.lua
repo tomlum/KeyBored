@@ -1,6 +1,15 @@
+--IMplement Strikes
+--Balance characters so they're in the screen
+
+--Strikes as mistakes you can gloss over
 --Strikes doesn't work... jarring to find your place again
 --Mark the current record with gold ghost weight
 --Fix Saves
+
+
+
+
+
 
 
 --Scream on victory, random victory noise
@@ -50,6 +59,7 @@ end
 g3Vol = 1
 
 function g3_load()
+
 	lg.setBackgroundColor(100,100,100)
 	simpleScale.updateScreen(800, 450,  SCREENWIDTH, SCREENHEIGHT)
 
@@ -120,7 +130,7 @@ function g3_load()
 
 	numOfEpilogues = 1
 
-	readytime = 330
+	readytime = 1--330
 	zoomtime = 375
 	victorytime = 200
 	fintime = 150
@@ -133,7 +143,11 @@ function g3_load()
 
 	player = {x = 400, y = 400, scale = 4}
 	currentPlayer = 1
-	rounds = 1--3
+	rounds = 1---3
+
+
+	strikes = true
+	numOfStrikes = 100---2
 
 	reset()
 end
@@ -147,7 +161,7 @@ function reset()
 	currentChar = 1
 	currentTry = ""
 	secondIntervals = 40
-	secondDuration = 30
+	secondDuration = 3000---30
 	clock = 10*secondDuration
 	clockbet = clock
 	failure = false
@@ -159,6 +173,7 @@ function reset()
 	timer = 0
 	time = 0
 
+	errorTally = 0
 
 	player.im = buff1
 	player.wordplace = 4
@@ -170,15 +185,15 @@ function reset()
 	s_gymno:stop()
 	s_bell:stop()
 	s_explosion:stop()
+
+	errorXs = {}
 end
+
 
 function nextTurn()
 	reset()	
 	currentPlayer = (currentPlayer%numOfPlayers) + 1
-
 end
-
-
 
 
 function addsweat(x, y)
@@ -213,8 +228,20 @@ function g3_textinput(t)
 				addsweat(player.x+15*player.scale+cu.floRan(-4,4), player.y-40*player.scale+cu.floRan(-4,4))
 			end
 		elseif mode == 2 then
-			failure = true
-			wrongchar = t
+			if strikes and errorTally < numOfStrikes then
+				ex = 150+lbFont:getWidth(currentTry)%(800-150*2)
+				why = math.floor(lbFont:getWidth(currentTry)/(800-150*2))*lbFont:getLineHeight()
+				table.insert(errorXs, {x = ex, y = why})
+				errorTally = errorTally + 1
+
+				currentTry = currentTry..currentSentence:sub(currentChar, currentChar)
+				currentChar = currentChar + 1
+
+
+			else
+				failure = true
+				wrongchar = t
+			end
 		end
 	end
 end
@@ -339,7 +366,7 @@ function g3_draw()
 		lg.setColor(255,0,0,70)	
 		lg.arc("fill", "pie", 181*4+2, 24*4+2, 60, -math.pi/2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi/2, 1000)
 		lg.setColor(0,0,0)	
-		lg.draw(dot, 181*4+2, 24*4+2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi, 2, 60)
+		lg.draw(dot, 181*4+3, 24*4+2, (time_difficulty/(secondIntervals))*2*math.pi-math.pi, 2, 60)
 		lg.setColor(255,255,255)
 		lg.draw(clockmask,0,0,0,4,4)
 		lg.setColor(255,255,255,math.min(255, time*3)-timer*5)
@@ -375,7 +402,7 @@ function g3_draw()
 		lg.setColor(255,0,0,70+rand1)	
 		lg.arc("fill", "pie", 181*4+2, 24*4+2, 40, -math.pi/2, (((clock)/(secondIntervals*secondDuration)))*2*math.pi-math.pi/2, 1000)
 		lg.setColor(0,0,0)	
-		lg.draw(dot, 181*4+2, 24*4+2, (((clock)/(secondIntervals*secondDuration)))*2*math.pi-math.pi, 2, 40)lg.setColor(255,255,255)
+		lg.draw(dot, 181*4+3, 24*4+2, (((clock)/(secondIntervals*secondDuration)))*2*math.pi-math.pi, 2, 40)lg.setColor(255,255,255)
 		lg.draw(clockmask,0,0,0,4,4)
 		lg.draw(punchingbag, 600, -10, math.sin(time/(80/currentChar))/(30/currentChar), 4, 4, 14, 0)
 		lg.draw(mask2,0,0,0,4,4)
@@ -393,12 +420,12 @@ function g3_draw()
 		lg.setColor(255,255,255)
 
 		if clock%2 == 0 and not failure then
-			rand1 = cu.floRan(-currentChar/80,currentChar/80)
-			rand2 = cu.floRan(-currentChar/80,currentChar/80)
-			rand3 = cu.floRan(-currentChar/80,currentChar/80)
-			rand4 = cu.floRan(-currentChar/80,currentChar/80)
-			rand5 = cu.floRan(-currentChar/80,currentChar/80)
-			rand6 = cu.floRan(-currentChar/80,currentChar/80)
+			rand1 = cu.floRan(-currentChar/150,currentChar/150)
+			rand2 = cu.floRan(-currentChar/150,currentChar/150)
+			rand3 = cu.floRan(-currentChar/150,currentChar/150)
+			rand4 = cu.floRan(-currentChar/150,currentChar/150)
+			rand5 = cu.floRan(-currentChar/150,currentChar/150)
+			rand6 = cu.floRan(-currentChar/150,currentChar/150)
 		elseif failure then
 			rand1, rand2, rand3, rand4, rand5, rand6 = 0, 0, 0, 0, 0, 0
 		end
@@ -417,14 +444,19 @@ function g3_draw()
 			lg.draw(weight,player.x-28*4-(i*4*4),player.y-(3+weightDrawY)*4,cu.floRan(-currentChar/80,currentChar/80),4,4,2, 8)
 			lg.draw(weight,player.x+28*4+(i*4*4),player.y-(3+weightDrawY)*4,cu.floRan(-currentChar/80,currentChar/80),4,4,2, 8)
 		end
+		local wordHeight = 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight()
 		lg.setColor(200,200,200)
-		lg.printf(currentSentence, 180+rand1*10, 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 800-180, "left")
-		lg.printf(currentSentence, 180+rand3*10, 10*rand4+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 800-180, "left")
+		lg.printf(currentSentence, 150+rand1*10, wordHeight, 800-150*2, "left")
+		lg.printf(currentSentence, 150+rand3*10, wordHeight, 800-150*2, "left")
 		
 		setPlayerColor(currentPlayer)
-		lg.printf(currentTry, 180+rand1*10, 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 800-180, "left")
-		lg.printf(currentTry, 180+rand3*10, 10*rand4+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight(), 800-180, "left")
-
+		lg.printf(currentTry, 150+rand1*10, wordHeight, 800-150*2, "left")
+		lg.printf(currentTry, 150+rand3*10, wordHeight, 800-150*2, "left")
+		
+		lg.setColor(255,0,0)
+		for i,v in ipairs(errorXs) do
+			lg.print("/",v.x, wordHeight+v.y)
+		end
 
 		drawsweat()
 	elseif mode == 3 then
@@ -449,7 +481,8 @@ function g3_draw()
 		lg.setColor(255,0,0,70+rand1)	
 		lg.arc("fill", "pie", 181*4+2, 24*4+2, 40, -math.pi/2, (((clock)/(secondIntervals*secondDuration)))*2*math.pi-math.pi/2, 1000)
 		lg.setColor(0,0,0)	
-		lg.draw(dot, 181*4+2, 24*4+2, (((clock)/(secondIntervals*secondDuration)))*2*math.pi-math.pi, 2, 40)lg.setColor(255,255,255)
+		lg.draw(dot, 181*4+3, 24*4+2, (((clock)/(secondIntervals*secondDuration)))*2*math.pi-math.pi, 2, 40)
+		lg.setColor(255,255,255)
 		lg.draw(clockmask,0,0,0,4,4)
 		lg.draw(punchingbag, 600, -10, math.sin(time/80)/30, 4, 4, 14, 0)
 		lg.draw(mask2,0,0,0,4,4)

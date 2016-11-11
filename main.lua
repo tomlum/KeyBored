@@ -1,12 +1,11 @@
 function love.load()
 	
-	SCREENWIDTH = 16*40
-	SCREENHEIGHT = 9*40
+	SCREENWIDTH = 16*70
+	SCREENHEIGHT = 9*70
 	FULLSCREEN = false
 
 	--Game Initializers
 	require "utilities/utilities"
-	la.setVolume(1)
 	math.randomseed(os.clock())
 	lg.setDefaultFilter("linear","nearest",1)
 	require "menus/menu"
@@ -22,6 +21,7 @@ function love.load()
 	--TITLE -> SELECT -> PLAY -> RESULTS
 	MODE = "PLAY"
 	game = 3
+	la.setVolume(0)
 	------------------------
 	------------------------
 

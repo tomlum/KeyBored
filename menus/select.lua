@@ -11,8 +11,8 @@ im_instructionsbackground1 = lg.newImage("assets/im/instructionsbackground1.png"
 im_instructionsbackground2 = lg.newImage("assets/im/instructionsbackground2.png")
 im_keyboard = lg.newImage("assets/im/keyboard2.png")
 
-instructionFont = lg.newFont("assets/fonts/AmericanTypewriter.ttc", 18*1.5)
-instructionFont:setLineHeight(1.14)
+instructionFont = lg.newFont("assets/fonts/IndieFlower.ttf", 25)
+--instructionFont:setLineHeight(1.14)
 
 keyFont = lg.newFont("assets/fonts/munro.ttf", 30)
 upSelectY = -height-50
@@ -142,13 +142,13 @@ function drawSelect()
   if game == 1 then
     lg.setColor(255,255,255)
     lg.draw(im_instructionsbackground1,0,upSelectY,0,1.5,1.5)
-    lg.setColor(0,0,0)
+    lg.setColor(0,0,255)
     lg.setFont(instructionFont)
-    lg.printf("BE COOL OR EXPLODE\n\n   Players take turns attempting to perform the raddest combo trick.  \n   Press SPACEBAR to jump.  \n   While falling in the air, MASH KEYS to do tricks.  \n   If you attempt to do a trick as you're landing or while you're rising in the air, not only will \nyou not be cool, \nyou will \nEXPLODE"
+    lg.printf("BE COOL OR EXPLODE\n\n   Take turns attempting to perform the RADDEST combo trick.  \n   Press SPACEBAR to jump.  \n   While falling in the air, MASH KEYS to do tricks.  \n   If you attempt to do a trick as you're landing or while you're rising in the air, not only will you not be cool, \nyou will EXPLODE"
       , 495*1.5, (25*1.5)+upSelectY, 280*1.5, "left"
       )
     lg.setColor(255,255,255)
-    drawKeyboard(15, 330-height-74, 3.5, {
+    drawKeyboard(40, 350-height-74, 2, {
       q=1,
       w=1,
       e=1,
@@ -176,7 +176,7 @@ function drawSelect()
       n=1,
       m=1
       })
-    drawKey("space", 207, upSelectY+50, 1)
+    drawKey("space", 170, upSelectY+180, .75)
   elseif game == 2 then
     lg.setColor(255,255,255)
     lg.draw(im_instructionsbackground2,0,upSelectY,0,1.5,1.5)
@@ -284,7 +284,7 @@ function drawKeyboard(x, y, size, keys)
   keyboard.size = size
   keyboard.keys =
   lg.setColor(176,176,135)
-  lg.rectangle("fill",keyboard.x,keyboard.y,160*keyboard.size,49*keyboard.size)
+  lg.rectangle("fill",keyboard.x,keyboard.y,145*keyboard.size,49*keyboard.size)
   drawKeyboardKey("`",5,5,keys.accent)
   drawKeyboardKey("1",13,5,keys.one)
   drawKeyboardKey("2",13+8*1,5,keys.two)
@@ -339,10 +339,10 @@ function drawKeyboard(x, y, size, keys)
   drawKeyboardKey("/",25+8*9,29,keys.forwardslash)
   drawKeyboardKey("rshift",25+8*10,29,keys.rshift)
   drawKeyboardKey("space",36,37,keys.space)
-  drawKeyboardKey("up",131+8,29,keys.up)
-  drawKeyboardKey("left",131,37,keys.left)
-  drawKeyboardKey("down",131+8,37,keys.down)
-  drawKeyboardKey("right",131+16,37,keys.right)
+  drawKeyboardKey("up",131+8-12,29,keys.up)
+  drawKeyboardKey("left",131-12,37,keys.left)
+  drawKeyboardKey("down",131+8-12,37,keys.down)
+  drawKeyboardKey("right",131+16-12,37,keys.right)
 
   lg.setColor(255,255,255)
   lg.draw(im_keyboard,x,y,0,keyboard.size,keyboard.size)
