@@ -5,14 +5,6 @@ require "minigames/wntt/g4_main"
 require "minigames/ams/g5_main"
 
 numOfGames = 5
-save = {highscores = {0,0,0,0,0}}
---Get the highscores
-if love.filesystem.exists("Save.lua") then
-	newsave = Tserial.unpack(love.filesystem.read("Save.lua"))
-	if #newsave == #save then
-		save = newsave
-	end
-end
 
 function keypressGames(key)
 	if game == 1 then
@@ -41,6 +33,8 @@ function loadGames()
 		g4_load()
 	elseif game == 5 then
 		g5_load()
+	elseif game == 5 then
+		g6_load()
 	end
 end
 
@@ -55,6 +49,8 @@ function updateGames()
 		g4_update()
 	elseif game == 5 then
 		g5_update()
+	elseif game == 6 then
+		g6_update()
 	end
 end
 
@@ -69,5 +65,7 @@ function drawGames()
 		g4_draw()
 	elseif game == 5 then
 		g5_draw()
+	elseif game == 6 then
+		g6_draw()
 	end
 end

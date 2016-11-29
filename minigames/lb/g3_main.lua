@@ -1,16 +1,5 @@
---IMplement Strikes
---Balance characters so they're in the screen
-
---Strikes as mistakes you can gloss over
---Strikes doesn't work... jarring to find your place again
 --Mark the current record with gold ghost weight
 --Fix Saves
-
-
-
-
-
-
 
 --Scream on victory, random victory noise
 --explosion sound effect
@@ -49,6 +38,8 @@
 --Sound is idle gym sounds -> orchestra tuning as 3 2 1, then like fast orchestra song
 --If fail, pause, drop weights, hard cut to letterbox reflecting
 
+Text = require ("utilities/Text")
+
 function g3NewImage(filePath)
 	return lg.newImage("minigames/lb/assets/"..filePath)
 end
@@ -61,7 +52,7 @@ g3Vol = 1
 function g3_load()
 
 	lg.setBackgroundColor(100,100,100)
-	simpleScale.updateScreen(800, 450,  SCREENWIDTH, SCREENHEIGHT)
+	simpleScale.updateScreen(800, 450)
 
 	buff1 = g3NewImage("buff1.png")
 	buff2 = g3NewImage("buff2.png")
@@ -104,8 +95,6 @@ function g3_load()
 	revelationFont = lg.newFont("assets/fonts/Athelas.ttc", 30)
 	lg.setFont(lbFont)
 
-	sweat = {}
-
 	sentences = {
 		{"Memento Mori",}
 		,
@@ -145,9 +134,8 @@ function g3_load()
 	currentPlayer = 1
 	rounds = 1---3
 
-
 	strikes = true
-	numOfStrikes = 100---2
+	numOfStrikes = 3
 
 	reset()
 end
@@ -170,10 +158,13 @@ function reset()
 	zoomy = 1
 	epilogue = math.random(numOfEpilogues)
 
+	sweat = {}
+	rubble = {}
+
 	timer = 0
 	time = 0
 
-	errorTally = 0
+	mistakes = {}
 
 	player.im = buff1
 	player.wordplace = 4
@@ -185,8 +176,6 @@ function reset()
 	s_gymno:stop()
 	s_bell:stop()
 	s_explosion:stop()
-
-	errorXs = {}
 end
 
 
@@ -197,11 +186,23 @@ end
 
 
 function addsweat(x, y)
-	table.insert(sweat, {x=x, y=y, v=cu.floRan(-5,5),vv=cu.floRan(5,10), color = cu.floRan(-50,50), size = cu.floRan(6,9)})
+	table.insert(sweat, {x=x, y=y, v=cu.floRan(-5,5),vv=cu.floRan(5,10), color = cu.floRan(-25,25), size = cu.floRan(6,9)})
+end
+
+function addrubble(x, y)
+	table.insert(rubble, {x=x, y=y, v=cu.floRan(-5,5),vv=cu.floRan(5,10), color = cu.floRan(-25,25), size = cu.floRan(6,9)})
 end
 
 function updatesweat()
 	for i,v in ipairs(sweat) do
+		v.x = v.x + v.v
+		v.y = v.y - v.vv
+		v.vv = v.vv-.3
+	end
+end
+
+function updaterubble()
+	for i,v in ipairs(rubble) do
 		v.x = v.x + v.v
 		v.y = v.y - v.vv
 		v.vv = v.vv-.3
@@ -216,6 +217,13 @@ function drawsweat()
 	lg.setColor(255,255,255)
 end
 
+function drawrubble()
+	for i,v in ipairs(rubble) do
+		lg.setColor(130+v.color,130+v.color,130+v.color)
+		lg.rectangle("fill", v.x, v.y, v.size, v.size)
+	end
+	lg.setColor(255,255,255)
+end
 
 
 function g3_textinput(t)	
@@ -228,16 +236,14 @@ function g3_textinput(t)
 				addsweat(player.x+15*player.scale+cu.floRan(-4,4), player.y-40*player.scale+cu.floRan(-4,4))
 			end
 		elseif mode == 2 then
-			if strikes and errorTally < numOfStrikes then
-				ex = 150+lbFont:getWidth(currentTry)%(800-150*2)
-				why = math.floor(lbFont:getWidth(currentTry)/(800-150*2))*lbFont:getLineHeight()
-				table.insert(errorXs, {x = ex, y = why})
-				errorTally = errorTally + 1
-
+			if strikes and #mistakes < numOfStrikes then
+				mistakes[currentChar] = true
 				currentTry = currentTry..currentSentence:sub(currentChar, currentChar)
 				currentChar = currentChar + 1
-
-
+				for i = 0, currentChar, 5 do
+					addsweat(player.x-15*player.scale+cu.floRan(-4,4), player.y-40*player.scale+cu.floRan(-4,4))
+					addsweat(player.x+15*player.scale+cu.floRan(-4,4), player.y-40*player.scale+cu.floRan(-4,4))
+				end
 			else
 				failure = true
 				wrongchar = t
@@ -270,6 +276,21 @@ function g3_update()
 			elseif lk.isClick("return") and timer == 0 then
 				currentSentence = sentences[difficulty][math.random(#sentences[difficulty])]
 				currentLinesHeight = sentenceLinesHeight[difficulty][math.random(#sentences[difficulty])]
+				sentenceDrawing = Text(0, 0, '['..currentSentence..'](color)', {
+					font = lbFont,
+					wrap_width = 500,  
+					color = function(dt, c, r, g, b)
+						local n_characters = #c.str_text
+						if mistakes[c.position] ~= nil then
+							lg.setColor(255,0,0)
+							character = 'x'
+						elseif c.position < currentChar then
+							setPlayerColor(currentPlayer)
+						else
+							lg.setColor(255,255,255)
+						end
+					end
+					})
 				clock = time_difficulty*secondDuration
 				clockbet = clock
 				timer = 1
@@ -286,6 +307,7 @@ function g3_update()
 			end
 		end
 	elseif mode == 2 then	
+		sentenceDrawing:update(dt)
 		s_idle:stop()
 		s_orchestra:stop()
 		s_liftsong1:play()
@@ -309,8 +331,11 @@ function g3_update()
 			weightDrawY = 134
 			mode = 4
 			timer = 0
-			for i = 1, difficulty*300 do
-				addsweat(cu.floRan(100,700), 90+cu.floRan(-20,20))
+			for x = 1, difficulty do
+				for i = 1, difficulty*30 do
+					addrubble(player.x-28*4-(x*4*4)+cu.floRan(-1,1), 90+cu.floRan(-20,20))
+					addrubble(player.x+28*4+(x*4*4)+cu.floRan(-1,1), 90+cu.floRan(-20,20))
+				end
 			end
 		end
 		if not failure then
@@ -350,6 +375,7 @@ function g3_update()
 	elseif mode == 4 then
 		timer = timer + 1
 		updatesweat()
+		updaterubble()
 		zoomy = 1
 		if timer > victorytime then
 			nextTurn()
@@ -446,17 +472,14 @@ function g3_draw()
 		end
 		local wordHeight = 10*rand2+player.y-(player.wordplace*player.scale)-(currentLinesHeight+1)*lbFont:getHeight()
 		lg.setColor(200,200,200)
-		lg.printf(currentSentence, 150+rand1*10, wordHeight, 800-150*2, "left")
-		lg.printf(currentSentence, 150+rand3*10, wordHeight, 800-150*2, "left")
+
+		sentenceDrawing:draw(150+rand1*10,wordHeight)
+		--lg.printf(currentSentence, 150+rand1*10, wordHeight, 800-150*2, "left")
+		--lg.printf(currentSentence, 150+rand3*10, wordHeight, 800-150*2, "left")
 		
-		setPlayerColor(currentPlayer)
-		lg.printf(currentTry, 150+rand1*10, wordHeight, 800-150*2, "left")
-		lg.printf(currentTry, 150+rand3*10, wordHeight, 800-150*2, "left")
-		
-		lg.setColor(255,0,0)
-		for i,v in ipairs(errorXs) do
-			lg.print("/",v.x, wordHeight+v.y)
-		end
+		--setPlayerColor(currentPlayer)
+		--lg.printf(currentTry, 150+rand1*10, wordHeight, 800-150*2, "left")
+		--lg.printf(currentTry, 150+rand3*10, wordHeight, 800-150*2, "left")
 
 		drawsweat()
 	elseif mode == 3 then
@@ -500,6 +523,7 @@ function g3_draw()
 
 
 		drawsweat()
+		drawrubble()
 	end
 
 	if mode ~= 3 and failure then

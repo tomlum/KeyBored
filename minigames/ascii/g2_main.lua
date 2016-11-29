@@ -7,7 +7,7 @@ function g2_load()
 	end
 	Text = require ("minigames/ascii/Text")
 
-	simpleScale.updateScreen(800, 450, SCREENWIDTH, SCREENHEIGHT)
+	simpleScale.updateScreen(800, 450)
 
 	lg.setDefaultFilter("linear","nearest",1)
 	fontSize = 80

@@ -17,17 +17,23 @@ im_playerpointer = lg.newImage("assets/im/playerpointer.png")
 playerpointerfont = lg.newFont("assets/fonts/munro.ttf", 25)
 
 playerColors = {
-	{255,255,255,255},
 	{20,200,20,255},
 	{0,156,255,255},
 	{230,169,90,255},
 	{213,110,166,255}
 }
 
+players = {
+	{name = "Lilly", color = playerColors[2]},
+	{name = "Stan", color = playerColors[3]},
+	{name = "Archibald", color = playerColors[4]},
+	{name = "Vivian", color = playerColors[5]}
+}
+
 
 function setPlayerColor(playerNum, a)
 	if a == nil then a = 255 end
-		local color = playerColors[playerNum+1]
+		local color = playerColors[playerNum]
 	if color == nil then return
 	else
 		lg.setColor(color[1], color[2], color[3], a)
@@ -36,9 +42,9 @@ end
 
 function swapPlayerColor(playerNum, c)
 	if c == "g"	then
-		colorSwap.send({nil, playerColors[playerNum+1]})
+		colorSwap.send({nil, playerColors[playerNum]})
 	elseif c == "m" then
-		colorSwap.send({nil, nil, nil, nil, playerColors[playerNum+1]})
+		colorSwap.send({nil, nil, nil, nil, playerColors[playerNum]})
 	end
 	colorSwap.set()
 end

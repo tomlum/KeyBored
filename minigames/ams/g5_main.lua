@@ -32,7 +32,7 @@ end
 
 
 function g5_load()
-	simpleScale.updateScreen(800, 450, SCREENWIDTH, SCREENHEIGHT)
+	simpleScale.updateScreen(800, 450)
 	drawForcess = true
 	planets = {}
 	suns = {}
@@ -319,7 +319,7 @@ function drawSuns()
 		lg.draw(im_carona, sun.x, sun.y, sun.spin/40+math.pi/2, (2*sun.size*sun.size+sun.speed/20)*sun.lr*sun.deadtimer*sun.deadtimer*sunSize, (2*sun.size*sun.size+sun.speed/cu.floRan(9,12))*sun.deadtimer*sun.deadtimer*sunSize, 35, 35)	
 		lg.draw(im_carona, sun.x, sun.y, -((sun.spin*1.1)/40+math.pi/4)+sun.spin/100, (2*sun.size*sun.size+sun.speed/20)*sun.lr*sun.deadtimer*sun.deadtimer*.8*sunSize, (2*sun.size*sun.size+sun.speed/cu.floRan(9,12))*sun.deadtimer*sun.deadtimer*.8*sunSize, 35, 35)	
 		lg.setColor(255,255,255)
-		mycolor = playerColors[sun.num+1]
+		mycolor = playerColors[sun.num]
 		newcolor = {
 			mycolor[1] + (255-mycolor[1])*(sun.speed/criticalSpeed),
 			mycolor[2] + (255-mycolor[2])*(sun.speed/criticalSpeed),

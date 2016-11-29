@@ -1,4 +1,4 @@
---Cooler meter bar (it's a skateboard)
+--Cooler meter bar (it's a skateboard) have center be a peak, represent jump
 --Paralx, billboard, plane with banner
 
 function g1NewImage(filePath)
@@ -12,7 +12,7 @@ end
 require "minigames/bcoe/tricks"
 
 function g1_load()
-	simpleScale.updateScreen(160, 90,  SCREENWIDTH, SCREENHEIGHT)
+	simpleScale.updateScreen(160, 90)
 	im_skater = g1NewImage("skater.png")
 	im_airskater = g1NewImage("airskater.png")
 	im_board = g1NewImage("board.png")
@@ -246,7 +246,7 @@ function g1_draw()
 
 	lg.setFont(trickfont)
 	lg.setColor(255,155,0)
-	lg.setColor(playerColors[currentPlayer+1])
+	lg.setColor(playerColors[currentPlayer])
 	lg.printf("Player "..currentPlayer, 2, -1, 80, "left")
 	lg.printf("Trys Left "..trysLeft, 2, 7, 80, "left")
 	hitkey = false

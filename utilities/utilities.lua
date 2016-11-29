@@ -5,6 +5,8 @@ la = love.audio
 lm = love.mouse
 lw = love.window
 
+lg.setDefaultFilter("linear","nearest",1)
+
 require "utilities/Tserial"
 require "utilities/camera"
 require "utilities/hsb"
@@ -12,6 +14,7 @@ require "utilities/colorSwap"
 require "utilities/simpleScale"
 require "utilities/commonUtilities"
 require "utilities/effects"
+require "utilities/saves"
 
 function lk.isClick(key)
 	return clickKey == key

@@ -19,7 +19,7 @@ function menuSwitch()
     simpleScale.setScreen(1200, 675, SCREENWIDTH, SCREENHEIGHT, {fullscreen=FULLSCREEN, vsync=true, msaa=0})
     fadeV = 4
   elseif MODE == "SELECT" and oldMode ~= "SELECT" then
-    simpleScale.updateScreen(1200, 675, SCREENWIDTH, SCREENHEIGHT)
+    simpleScale.updateScreen(1200, 675)
     bookDropScale = 50
     bookDust = {}
     fadeV = 3
@@ -30,7 +30,7 @@ function menuSwitch()
     loadGames()
     fade = 255
   elseif MODE == "RESULTS" and oldMode ~= "RESULTS"  then
-    simpleScale.updateScreen(1200, 675, SCREENWIDTH, SCREENHEIGHT)
+    simpleScale.updateScreen(1200, 675)
     if highscore < winningScore then
       highscore = winningScore
     end

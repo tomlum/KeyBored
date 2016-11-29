@@ -35,7 +35,7 @@ function simpleScale.setScreen(gw, gh, sw, sh, settings)
 	end
 end
 
-function simpleScale.updateScreen(gw, gh, sw, sh, settings)	
+function simpleScale.updateScreen(gw, gh, settings)	
 	gAspectRatio = gw/gh
 	gameW, gameH, screenW, screenH = gw, gh, love.graphics.getWidth(), love.graphics.getHeight()
 	sAspectRatio = screenW/screenH
